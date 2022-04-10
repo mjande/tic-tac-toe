@@ -137,7 +137,6 @@ class Board < Game
   end
 
   def check_board_for_position(position)
-    p position
     if board[position] == BLANK
       true
     else
