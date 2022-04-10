@@ -1,5 +1,5 @@
-# Game class data: board class, player names, and win variable
-# Game class methods: init, input_player_names, convert_to_position
+# Game class data: variables and methods relating to gameplay and user
+# interaction functions
 class Game
   attr_accessor :player1, :player2, :win, :newboard, :player1_mark, :player2_mark
 
@@ -82,8 +82,8 @@ class Game
   end
 end
 
-# Board class data: board
-# Board class methods: display_board, update_board, check_board(s)
+# Board class: variables and methods relating to the state of the board,
+# including display, board array, and board checks (for win and occupied spots)
 class Board < Game
   BLANK = ' '
   attr_accessor :board
