@@ -5,36 +5,30 @@ require_relative 'board'
 class Game
   attr_accessor :player1, :player2, :win, :newboard, :player1_mark, :player2_mark
 
-  def initialize
+  def start_game
     @win = false
     newboard = Board.new
     @newboard = newboard
     puts "Let's play Tic-Tac-Toe"
     assign_player1
     assign_player2
-  end
-
-  def new_game
-    puts 'Play again? (Y or N)'
-    response = gets.chomp
-    if response == 'Y'
-      new_game
-    else
-      puts 'Thanks for playing!'
-    end
+    play_game
   end
   
   def assign_player1
     puts 'Player 1: Input name below.'
-    player1 = gets.chomp
-    @player1 = player1
-    puts 'Player 1: Would you like to play X or O?'
-    player1_mark = gets.chomp
-    if player1_mark.include?('X') || player1_mark.include?('O')
-      @player1_mark = player1_mark
-    else
+    @player1 = gets.chomp
+    @player1_mark = choose_mark
+  end
+
+  def choose_mark 
+    loop do
+      puts 'Player 1: Would you like to play X or O?'
+      mark = gets.chomp.upcase.strip
+      responses = ['X', 'O']
+      return mark if responses.include(mark)
+
       puts 'ERROR: Try again. Please select X or O.'
-      assign_player1
     end
   end
 
@@ -42,8 +36,8 @@ class Game
     puts 'Player 2: Input name below.'
     player2 = gets.chomp
     @player2 = player2
-    @player2_mark = 'X' if player1_mark == 'O'
-    @player2_mark = 'O' if player1_mark == 'X'
+    @player2_mark = 'X' if @player1_mark == 'O'
+    @player2_mark = 'O' if @player1_mark == 'X'
     puts "#{player1} vs #{player2}. Let's play!"
   end
 
@@ -71,6 +65,7 @@ class Game
       end
     end
     determine_winner(turn)
+    play_again
   end
 
   def convert_to_position(row, col)
@@ -90,6 +85,18 @@ class Game
       puts "#{player1} wins!"
     elsif turn.even?
       puts "#{player2} wins!"
+    end
+  end
+
+  def play_again
+    if again == true
+      puts 'Play again? (Y or N)'
+      response = gets.chomp
+    end
+    if response == 'N'
+      puts 'Thanks for playing!'
+    else 
+      start_game
     end
   end
 end
