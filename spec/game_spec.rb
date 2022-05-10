@@ -35,8 +35,6 @@ describe Game do
     end
 
     it 'updates player1 from player input' do
-      allow(new_game).to receive(:gets).and_return('name')
-      allow(new_game).to receive(:choose_mark).and_return('X')
       new_game.assign_player1
       name = new_game.instance_variable_get(:@player1)
       expect(name).to eq('name')
@@ -51,21 +49,56 @@ describe Game do
 
   describe '#choose_mark' do
     subject(:new_game) { described_class.new }
-    
-    context 'player inputs a valid mark' do
+
+    context 'when player inputs a valid mark' do
       it 'returns mark' do
         allow(new_game).to receive(:gets).and_return('O')
         expect(new_game.choose_mark).to eq('O')
       end
     end
 
-    context 'player inputs an invalid mark, followed by a valid one' do
+    context 'when player inputs an invalid mark, followed by a valid one' do
       it 'returns first valid mark' do
         allow(new_game).to receive(:gets).and_return('z', 'X')
         expect(new_game.choose_mark).to eq('X')
       end
     end
   end
+
+  describe '#assign_player2' do
+    subject(:new_game) { described_class.new }
+
+    it "assigns 'name' to player2" do
+      allow(new_game).to receive(:gets).and_return('name')
+      new_game.assign_player2
+      name = new_game.instance_variable_get(:@player2)
+      expect(name).to eq('name')
+    end
+  end
+
+  describe '#choose_mark' do
+    subject(:new_game) { described_class.new }
+
+    context 'if player1_mark is X' do
+      it 'returns O' do
+        allow(new_game).to receive(:gets).and_return('X')
+        new_game.assign_player1
+        expect(new_game.choose_other_mark).to eq('O')
+      end
+    end
+
+    context 'if player1_mark is O' do
+      it 'returns X' do  
+        allow(new_game).to receive(:gets).and_return('O')
+        new_game.assign_player1
+        expect(new_game.choose_other_mark).to eq('X')
+      end
+    end
+  end
+
+  describe '#play_game' do
+  end
+
 end
     
       

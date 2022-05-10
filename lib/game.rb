@@ -25,33 +25,29 @@ class Game
     loop do
       puts 'Player 1: Would you like to play X or O?'
       mark = gets.chomp.upcase.strip
-      responses = ['X', 'O']
-      return mark if responses.include(mark)
+      mark = verify_mark(mark)
+      return mark unless mark.nil?
 
       puts 'ERROR: Try again. Please select X or O.'
     end
+  end
+
+  def verify_mark(mark)
+    responses = ['X', 'O']
+    return mark if responses.include?(mark)
   end
 
   def assign_player2
     puts 'Player 2: Input name below.'
     player2 = gets.chomp
     @player2 = player2
-    @player2_mark = 'X' if @player1_mark == 'O'
-    @player2_mark = 'O' if @player1_mark == 'X'
+    @player2_mark = choose_other_mark
     puts "#{player1} vs #{player2}. Let's play!"
   end
 
-  def play_round(player, mark)
-    puts "#{player}, choose a row:"
-    row = gets.chomp.to_i
-    puts "#{player}, choose a column:"
-    col = gets.chomp.to_i
-    position = convert_to_position(row, col)
-    if @newboard.check_board_for_position(position)
-      @newboard.update_display(position, mark)
-    else
-      play_round(player, mark)
-    end
+  def choose_other_mark
+    return 'X' if @player1_mark == 'O'
+    return 'O' if @player1_mark == 'X'
   end
 
   def play_game
@@ -67,6 +63,21 @@ class Game
     determine_winner(turn)
     play_again
   end
+  
+  def play_round(player, mark)
+    puts "#{player}, choose a row:"
+    row = gets.chomp.to_i
+    puts "#{player}, choose a column:"
+    col = gets.chomp.to_i
+    position = convert_to_position(row, col)
+    if @newboard.check_board_for_position(position)
+      @newboard.update_display(position, mark)
+    else
+      play_round(player, mark)
+    end
+  end
+
+  
 
   def convert_to_position(row, col)
     case row
