@@ -2,5 +2,5 @@
 
 require_relative 'game'
 
-newgame = Game.new
-newgame.start_game
+# newgame = Game.new
+# newgame.start_game
