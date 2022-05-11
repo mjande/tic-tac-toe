@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'game'
 
 # Board class: variables and methods relating to the state of the board,
@@ -23,11 +25,23 @@ class Board
     display_board
   end
 
-  def check_board_for_win
-    return check_rows unless check_rows.nil?
-    return check_columns unless check_columns.nil?
+  def check_board_for_position(position)
+    if board[position].nil?
+      true
+    else
+      puts 'ERROR: that position is already taken'
+      false
+    end
+  end
 
-    check_diagonals
+  def check_board_for_win
+    if !check_rows.nil?
+      check_rows
+    elsif !check_columns.nil?
+      check_columns
+    elsif !check_diagonals.nil?
+      check_diagonals
+    end
   end
 
   def check_rows
@@ -55,15 +69,6 @@ class Board
       @board[0]
     elsif @board[2] == @board[4] && @board[4] == @board[6]
       @board[2]
-    end
-  end
-
-  def check_board_for_position(position)
-    if board[position].nil?
-      true
-    else
-      puts 'ERROR: that position is already taken'
-      false
     end
   end
 end
