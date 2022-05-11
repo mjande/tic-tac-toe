@@ -19,14 +19,15 @@ class Board
   end
 
   def update_display(position, mark)
-    board[position.to_i] = mark
+    @board[position.to_i] = mark
     display_board
   end
 
   def check_board_for_win
-    check_rows
-    check_columns if check_columns.nil?
-    check_diagonals if check_columns.nil?
+    return check_rows unless check_rows.nil?
+    return check_columns unless check_columns.nil?
+
+    check_diagonals
   end
 
   def check_rows
@@ -57,10 +58,8 @@ class Board
     end
   end
 
-
-
   def check_board_for_position(position)
-    if board[position] == BLANK
+    if board[position].nil?
       true
     else
       puts 'ERROR: that position is already taken'

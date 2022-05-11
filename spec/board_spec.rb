@@ -1,6 +1,35 @@
 require_relative '../lib/board'
 
 describe Board do
+  describe '#check_board_for_win' do
+    subject(:board) { Board.new }
+
+    it 'returns winning mark if check_rows is not nil' do
+      allow(board).to receive(:check_rows).and_return('X')
+      expect(board.check_board_for_win).to eq('X')
+    end
+
+    it 'returns winning mark if check_rows is nil' do
+      allow(board).to receive(:check_rows).and_return(nil)
+      allow(board).to receive(:check_columns).and_return('X')
+      expect(board.check_board_for_win).to eq('X')
+    end
+
+    it 'returns winning if check_rows and check_columns are nil' do
+      allow(board).to receive(:check_rows).and_return(nil)
+      allow(board).to receive(:check_columns).and_return(nil)
+      allow(board).to receive(:check_diagonals).and_return('X')
+      expect(board.check_board_for_win).to eq('X')
+    end
+
+    it 'returns nil if all methods return nil' do
+      allow(board).to receive(:check_rows).and_return(nil)
+      allow(board).to receive(:check_columns).and_return(nil)
+      allow(board).to receive(:check_diagonals).and_return(nil)
+      expect(board.check_board_for_win).to be_nil
+    end
+  end
+  
   describe '#check_rows' do
     context 'there is a winning row' do
       subject(:row_win) { Board.new(['X', 'X', 'X', nil, nil, nil, nil, nil, nil]) }
