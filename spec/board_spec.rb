@@ -30,93 +30,44 @@ describe Board do
   end
 
   describe '#check_board_for_win' do
-    subject(:board) { Board.new }
+    context 'there is a row win' do
+      subject(:row_win) { described_class.new(%w[X O X X X X O X O]) }
 
-    it 'returns winning mark if check_rows is not nil' do
-      allow(board).to receive(:check_rows).and_return('X')
-      expect(board.check_board_for_win).to eq('X')
-    end
-
-    it 'returns winning mark if check_rows is nil' do
-      allow(board).to receive(:check_rows).and_return(nil)
-      allow(board).to receive(:check_columns).and_return('X')
-      expect(board.check_board_for_win).to eq('X')
-    end
-
-    it 'returns winning if check_rows and check_columns are nil' do
-      allow(board).to receive(:check_rows).and_return(nil)
-      allow(board).to receive(:check_columns).and_return(nil)
-      allow(board).to receive(:check_diagonals).and_return('X')
-      expect(board.check_board_for_win).to eq('X')
-    end
-
-    it 'returns nil if all methods return nil' do
-      allow(board).to receive(:check_rows).and_return(nil)
-      allow(board).to receive(:check_columns).and_return(nil)
-      allow(board).to receive(:check_diagonals).and_return(nil)
-      expect(board.check_board_for_win).to be_nil
-    end
-  end
-
-  describe '#check_rows' do
-    context 'there is a winning row' do
-      subject(:row_win) { Board.new(['X', 'X', 'X', nil, nil, nil, nil, nil, nil]) }
-      it 'returns winning mark X' do
-        expect(row_win.check_rows).to eq('X')
-      end
-
-      subject(:row_win2) { Board.new([nil, nil, nil, nil, nil, nil, 'O', 'O', 'O']) }
-      it 'returns winning mark O' do
-        expect(row_win2.check_rows).to eq('O')
+      it 'returns winning mark' do
+        expect(row_win.check_board_for_win).to eq('X')
       end
     end
 
-    context 'there is not a winning row' do
-      subject(:no_row_win) { Board.new([nil, nil, nil, nil, nil, nil, nil, nil, nil]) }
-      it 'returns nil' do
-        expect(no_row_win.check_rows).to be_nil
-      end
-    end
-  end
+    context 'there is a column win' do
+      subject(:col_win) { described_class.new(%w[O X X X X O O X X]) }
 
-  describe '#check_columns' do
-    context 'there is a winning column' do
-      subject(:col_win) { Board.new(['X', nil, nil, 'X', nil, nil,'X', nil, nil]) }
-      it 'returns winning mark X' do
-        expect(col_win.check_columns).to eq('X')
-      end
-
-      subject(:col_win2) { Board.new([nil, nil, 'O', nil, nil, 'O', nil,nil, 'O']) }
-      it 'returns winning mark O' do
-        expect(col_win2.check_columns).to eq('O')
+      it 'returns winning mark' do
+        expect(col_win.check_board_for_win).to eq('X')
       end
     end
 
-    context 'there is not a winning row' do
-      subject(:no_col_win) { Board.new([nil, nil, nil, nil, nil, nil, nil,nil, nil]) }
-      it 'returns nil' do
-        expect(no_col_win.check_columns).to be_nil
-      end
-    end
-  end
+    context 'there is a diagonal win' do
+      subject(:diag_win) { described_class.new(%w[X O O O X O O O X]) }
 
-  describe '#check_diagonals' do
-    context 'there is a winning diagonal' do
-      subject(:diag_win) { Board.new(['X', nil, nil, nil, 'X', nil, nil, nil, 'X']) }
-      it 'returns winning mark X' do
-        expect(diag_win.check_diagonals).to eq('X')
-      end
-
-      subject(:diag_win2) { Board.new([nil, nil, 'O', nil, 'O', nil, 'O', nil, nil])}
-      it 'returns winning mark O' do
-        expect(diag_win2.check_diagonals).to eq('O')
+      it 'returns winning mark' do
+        expect(diag_win.check_board_for_win).to eq('X')
       end
     end
 
-    context 'there is not a winning diagonal' do
-      subject(:no_diag_win) { Board.new([nil, nil, nil, nil, nil, nil, nil,nil, nil])}
-      it 'returns nil' do
-        expect(no_diag_win.check_diagonals).to be_nil
+    context 'there is a tie game' do
+      subject(:tie_game) { described_class.new(%w[O O X X X O O X X]) }
+
+      it 'returns true' do
+        allow(tie_game).to receive(:puts)
+        expect(tie_game.check_board_for_win).to be_truthy
+      end
+    end
+
+    context 'there is not a win' do
+      subject(:no_win) { Board.new }
+
+      it 'returns false' do
+        expect(no_win.check_board_for_win).to be_falsey
       end
     end
   end

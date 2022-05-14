@@ -41,8 +41,12 @@ class Board
       check_columns
     elsif !check_diagonals.nil?
       check_diagonals
+    else
+      tie_game?
     end
   end
+
+  private
 
   def check_rows
     if !@board[0].nil? && @board[0] == @board[1] && @board[1] == @board[2]
@@ -69,6 +73,15 @@ class Board
       @board[0]
     elsif @board[2] == @board[4] && @board[4] == @board[6]
       @board[2]
+    end
+  end
+
+  def tie_game?
+    if @board.none?(nil)
+      puts 'Tie game!'
+      true
+    else
+      false
     end
   end
 end

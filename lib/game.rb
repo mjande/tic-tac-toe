@@ -31,9 +31,9 @@ class Game
 
   def play_game
     player = @player1
-    win = false
-    while win == false
-      win = play_round(player)
+    end_game = false
+    while end_game == false
+      end_game = play_round(player)
       player = (player == @player1 ? @player2 : @player1) # Switch players
     end
     determine_winner
@@ -50,7 +50,7 @@ class Game
       break position if valid_input?(position)
     end
     @newboard.update_display(position, player.mark)
-    !@newboard.check_board_for_win.nil?
+    @newboard.check_board_for_win
   end
 
   private
