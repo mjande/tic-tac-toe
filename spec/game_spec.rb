@@ -9,6 +9,7 @@ describe Game do
       player2 = double('player2', name: 'Player #2', mark: 'O')
       first_round.instance_variable_set(:@player1, player1)
       first_round.instance_variable_set(:@player2, player2)
+      allow(first_round).to receive(:puts)
     end
 
     context 'when a player wins after three rounds' do
@@ -56,6 +57,20 @@ describe Game do
 
       it 'loops six times' do
         expect(first_round).to receive(:play_round).exactly(6).times
+        first_round.play_game
+      end
+    end
+
+    context 'the game ends in a tie' do
+      before do
+        allow(first_round).to receive(:play_round).and_return(true)
+        board = instance_double('Board')
+        allow(board).to receive(:check_board_for_win).and_return(true)
+        first_round.instance_variable_set(:@newboard, board)
+      end
+
+      it 'outputs tie message' do 
+        expect(first_round).to receive(:tie_game_message)
         first_round.play_game
       end
     end

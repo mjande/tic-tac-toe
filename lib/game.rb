@@ -77,6 +77,8 @@ class Game
       player1_win_message
     elsif winning_mark == @player2.mark
       player2_win_message
+    else 
+      tie_game_message
     end
   end
 
@@ -86,6 +88,10 @@ class Game
 
   def player2_win_message
     puts "#{@player2.name} wins!"
+  end
+
+  def tie_game_message
+    puts 'Tie game!'
   end
 
   def play_again
