@@ -1,104 +1,118 @@
 require_relative '../lib/game'
 
 describe Game do
-  describe '#start_game' do
-    subject(:new_game) { described_class.new }
-
-    before do
-      allow(new_game).to receive(:assign_player1)
-      allow(new_game).to receive(:assign_player2)
-      allow(new_game).to receive(:play_game)
-    end
-    
-    it 'sends message to assign_player1' do
-      expect(new_game).to receive(:assign_player1).once
-      new_game.start_game
-    end
-
-    it 'sends message to assign_player2' do
-      expect(new_game).to receive(:assign_player2).once
-      new_game.start_game
-    end
-
-    it 'sends message to play_game' do
-      expect(new_game).to receive(:play_game).once
-      new_game.start_game
-    end
-  end
-
-  describe "#assign_player1" do
-    subject(:new_game) { described_class.new }
-
-    before do
-      allow(new_game).to receive(:gets).and_return('name')
-      allow(new_game).to receive(:choose_mark).and_return('X')
-    end
-
-    it 'updates player1 from player input' do
-      new_game.assign_player1
-      name = new_game.instance_variable_get(:@player1)
-      expect(name).to eq('name')
-    end
-
-    it 'updates player1_mark from #choose_mark' do
-      new_game.assign_player1
-      mark = new_game.instance_variable_get(:@player1_mark)
-      expect(mark).to eq('X')
-    end
-  end
-
-  describe '#choose_mark' do
-    subject(:new_game) { described_class.new }
-
-    context 'when player inputs a valid mark' do
-      it 'returns mark' do
-        allow(new_game).to receive(:gets).and_return('O')
-        expect(new_game.choose_mark).to eq('O')
-      end
-    end
-
-    context 'when player inputs an invalid mark, followed by a valid one' do
-      it 'returns first valid mark' do
-        allow(new_game).to receive(:gets).and_return('z', 'X')
-        expect(new_game.choose_mark).to eq('X')
-      end
-    end
-  end
-
-  describe '#assign_player2' do
-    subject(:new_game) { described_class.new }
-
-    it "assigns 'name' to player2" do
-      allow(new_game).to receive(:gets).and_return('name')
-      new_game.assign_player2
-      name = new_game.instance_variable_get(:@player2)
-      expect(name).to eq('name')
-    end
-  end
-
-  describe '#choose_mark' do
-    subject(:new_game) { described_class.new }
-
-    context 'if player1_mark is X' do
-      it 'returns O' do
-        allow(new_game).to receive(:gets).and_return('X')
-        new_game.assign_player1
-        expect(new_game.choose_other_mark).to eq('O')
-      end
-    end
-
-    context 'if player1_mark is O' do
-      it 'returns X' do  
-        allow(new_game).to receive(:gets).and_return('O')
-        new_game.assign_player1
-        expect(new_game.choose_other_mark).to eq('X')
-      end
-    end
-  end
-
   describe '#play_game' do
+    subject(:first_round) { described_class.new }
+
+    before do
+      player1 = double('player1', name: 'Player #1', mark: 'X')
+      player2 = double('player2', name: 'Player #2', mark: 'O')
+      first_round.instance_variable_set(:@player1, player1)
+      first_round.instance_variable_set(:@player2, player2)
+    end
+
+    context 'when a player wins after three rounds' do
+      before do
+        allow(first_round).to receive(:play_round).and_return(false, false, true)
+        board = instance_double('Board')
+        allow(board).to receive(:check_board_for_win).and_return('X')
+        first_round.instance_variable_set(:@newboard, board)
+      end
+
+      it 'loops three times' do
+        expect(first_round).to receive(:play_round).exactly(3).times
+        first_round.play_game
+      end
+
+      it 'outputs winner message' do
+        expect(first_round).to receive(:player1_win_message)
+        first_round.play_game
+      end
+
+      context 'when players want to play again' do
+        it 'starts new game after finishing loop' do
+          allow(first_round).to receive(:start_game)
+          allow(first_round).to receive(:gets).and_return('Y')
+          expect(first_round).to receive(:start_game).once
+          first_round.play_game
+        end
+      end
+
+      context 'when players do not want to play again' do
+        it 'does not start new game after finishing loop' do
+          allow(first_round).to receive(:gets).and_return('N')
+          expect(first_round).not_to receive(:start_game)
+          first_round.play_game
+        end
+      end
+    end
+    context 'when a player wins after six rounds' do
+      before do
+        allow(first_round).to receive(:play_round).and_return(false, false, false, false, false, true)
+        board = instance_double('Board')
+        allow(board).to receive(:check_board_for_win).and_return(nil, nil, nil, nil, nil, nil, 'X')
+        first_round.instance_variable_set(:@newboard, board)
+      end
+
+      it 'loops six times' do
+        expect(first_round).to receive(:play_round).exactly(6).times
+        first_round.play_game
+      end
+    end
   end
 
+  describe '#play_round' do
+    subject(:round) { described_class.new }
+    let(:player1) { double('player1', name:'Player #1', mark: 'X') }
+
+    context 'when all inputs are valid' do
+      before do
+        board = double('blank board', check_board_for_position: true, update_display: nil, check_board_for_win: false)
+        round.instance_variable_set(:@newboard, board)
+        allow(round).to receive(:puts)
+        allow(round).to receive(:gets).and_return('1', '2')
+      end
+
+      it 'converts valid coordinates to position via #convert_to_position' do
+        expect(round).to receive(:convert_to_position).and_return(4)
+        round.play_round(player1)
+      end
+
+      it 'passes check for #valid_input?' do
+        expect(round).to receive(:valid_input?).and_return(true)
+        round.play_round(player1)
+      end
+    end
+
+    context 'when user inputs invalid position' do
+      before do
+        board = double('blank board', check_board_for_position: true, update_display: nil, check_board_for_win: false)
+        round.instance_variable_set(:@newboard, board)
+        allow(round).to receive(:puts)
+        allow(round).to receive(:gets).and_return('9', '-12', '1', '2')
+      end
+
+      it 'initially fails check for #valid_input?' do
+        expect(round).to receive(:valid_input?).and_return(false, true)
+        round.play_round(player1)
+      end
+    end
+
+    context 'when user inputs a position that is already taken' do
+      before do
+        board = double('blank board', update_display: nil, check_board_for_win: false)
+        allow(board).to receive(:check_board_for_position).and_return(false, true)
+        round.instance_variable_set(:@newboard, board)
+        allow(round).to receive(:puts)
+        allow(round).to receive(:gets).and_return('1', '1', '1', '2')
+      end
+
+      it 'initially fails check for #valid_input?' do
+        expect(round).to receive(:valid_input?).and_return(false, true)
+        round.play_round(player1)
+      end
+    end
+  end
 end
     
       
