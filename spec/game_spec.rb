@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/game'
 
 describe Game do
@@ -69,7 +71,7 @@ describe Game do
         first_round.instance_variable_set(:@newboard, board)
       end
 
-      it 'outputs tie message' do 
+      it 'outputs tie message' do
         expect(first_round).to receive(:tie_game_message)
         first_round.play_game
       end
@@ -78,7 +80,7 @@ describe Game do
 
   describe '#play_round' do
     subject(:round) { described_class.new }
-    let(:player1) { double('player1', name:'Player #1', mark: 'X') }
+    let(:player1) { double('player1', name: 'Player #1', mark: 'X') }
 
     context 'when all inputs are valid' do
       before do
@@ -129,5 +131,3 @@ describe Game do
     end
   end
 end
-    
-      

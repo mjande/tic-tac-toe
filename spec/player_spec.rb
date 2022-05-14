@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require_relative '../lib/player'
 
 describe Player do
-  describe '#set_up' do
+  describe '#initial_set_up' do
     context 'when setting player 1' do
       subject(:new_player1) { described_class.new }
 
@@ -9,7 +11,7 @@ describe Player do
         before do
           allow(new_player1).to receive(:gets).and_return('Bob', 'X')
           allow(new_player1).to receive(:puts)
-          new_player1.set_up(1)
+          new_player1.initial_set_up(1)
         end
 
         it 'sets name as Bob' do
@@ -28,11 +30,10 @@ describe Player do
       context 'with invalid input' do
         it 'outputs error message' do
           allow(new_player1).to receive(:gets).and_return('Bob', 'Y', 'X')
-          input_message = 'Player 1: Input name below.'
           error_message = 'ERROR: Try again. Please select X or O.'
           allow(new_player1).to receive(:puts)
           expect(new_player1).to receive(:puts).with(error_message)
-          new_player1.set_up(1)
+          new_player1.initial_set_up(1)
         end
       end
     end
@@ -40,11 +41,11 @@ describe Player do
     context 'when setting player 2' do
       subject(:new_player2) { described_class.new }
 
-      before do 
+      before do
         allow(new_player2).to receive(:gets).and_return('James')
         allow(new_player2).to receive(:puts)
-        described_class.class_variable_set(:@@used_mark, 'X') 
-        new_player2.set_up(2)
+        described_class.class_variable_set(:@@used_mark, 'X')
+        new_player2.initial_set_up(2)
       end
 
       it 'sets name as James' do

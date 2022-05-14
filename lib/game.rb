@@ -2,7 +2,6 @@
 
 require_relative 'board'
 require_relative 'player'
-require 'pry-byebug'
 
 # Game class data: variables and methods relating to gameplay and user
 # interaction functions
@@ -24,9 +23,9 @@ class Game
 
   def create_players
     @player1 = Player.new
-    @player1.set_up(1)
+    @player1.initial_set_up(1)
     @player2 = Player.new
-    @player2.set_up(2)
+    @player2.initial_set_up(2)
   end
 
   def play_game
@@ -77,7 +76,7 @@ class Game
       player1_win_message
     elsif winning_mark == @player2.mark
       player2_win_message
-    else 
+    else
       tie_game_message
     end
   end

@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
+# The Player class stores the methods to set up the players at the start of the
+# game, and scripts the printed commands for that process.
 class Player
   attr_reader :name, :mark, :used_mark
+
   @@used_mark = nil
 
-  def set_up(num)
+  def initial_set_up(num)
     if num == 1
       assign_player1
     else
@@ -25,7 +30,7 @@ class Player
 
   def choose_mark
     responses = %w[X O]
-    
+
     loop do
       puts 'Player 1: Would you like to play X or O?'
       mark = gets.chomp.upcase.strip
@@ -46,4 +51,3 @@ class Player
     return 'O' if @@used_mark == 'X'
   end
 end
-
